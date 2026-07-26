@@ -123,7 +123,7 @@ This project uses the **YouTube Data API v3** to retrieve:
 Add your deployed URL here.
 
 ```
-[https://your-domain.com](https://zaydkhan.vercel.app/)
+https://zaydkhan.vercel.app/
 ```
 
 ## License
