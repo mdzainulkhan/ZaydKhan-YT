@@ -49,9 +49,6 @@ export default function Home() {
   const [playlistId, setPlaylistId] =
     useState('');
 
-  const API_KEY =
-    process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
-
   const CHANNEL_ID =
     'UCLX1dlIr5fYMqXX4k3UQijg';
 
@@ -78,18 +75,39 @@ export default function Home() {
   }
 }, [darkMode]);
 
+  const formatVideos = (items = []) =>
+    (items || [])
+      .filter(
+        (item) =>
+          item?.snippet?.resourceId
+            ?.videoId
+      )
+      .map((item) => ({
+        id: {
+          videoId:
+            item.snippet.resourceId
+              .videoId,
+        },
+        snippet: item.snippet,
+      }));
+
   // Fetch Channel Info
   const fetchChannelInfo = async () => {
     try {
       const res = await fetch(
-        `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails&id=${CHANNEL_ID}&key=${API_KEY}`
+        `/api/youtube?channelId=${encodeURIComponent(CHANNEL_ID)}`
       );
 
       const data = await res.json();
 
-      if (data.items?.length > 0) {
-        const info = data.items[0];
+      if (data.error) {
+        console.error(data.error);
+        return;
+      }
 
+      const info = data.channelInfo;
+
+      if (info) {
         setChannelInfo(info);
 
         setAvatar(
@@ -98,15 +116,16 @@ export default function Home() {
         );
 
         const uploadsPlaylistId =
-          info.contentDetails
-            ?.relatedPlaylists?.uploads;
+          data.playlistId || '';
 
         setPlaylistId(uploadsPlaylistId);
-
-        fetchVideos(uploadsPlaylistId);
+        setVideos(formatVideos(data.videos || []));
+        setNextPageToken(
+          data.nextPageToken || ''
+        );
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -121,27 +140,18 @@ export default function Home() {
 
     try {
       const res = await fetch(
-        `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=12&pageToken=${pageToken}&key=${API_KEY}`
+        `/api/youtube?playlistId=${encodeURIComponent(uploadsPlaylistId)}&pageToken=${encodeURIComponent(pageToken)}`
       );
 
       const data = await res.json();
 
-      const formattedVideos = (
-        data.items || []
-      )
-        .filter(
-          (item) =>
-            item?.snippet?.resourceId
-              ?.videoId
-        )
-        .map((item) => ({
-          id: {
-            videoId:
-              item.snippet.resourceId
-                .videoId,
-          },
-          snippet: item.snippet,
-        }));
+      if (data.error) {
+        console.error(data.error);
+        return;
+      }
+
+      const formattedVideos =
+        formatVideos(data.videos || []);
 
       setVideos((prev) => {
         const existingIds = new Set(
@@ -163,7 +173,7 @@ export default function Home() {
         data.nextPageToken || ''
       );
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
