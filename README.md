@@ -14,7 +14,8 @@ A modern YouTube channel dashboard built with **Next.js** that displays videos f
 * Video Search functionality.
 * Responsive video grid layout.
 * Video thumbnails with title and publish date.
-* Watch videos directly on YouTube.
+* Add Light and Dark mode.
+* Watch videos directly on the same page.
 * Fast loading and optimized performance.
 * Mobile-friendly responsive design.
 
