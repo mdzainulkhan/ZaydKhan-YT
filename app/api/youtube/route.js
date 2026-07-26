@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 export async function GET(request) {
   const apiKey =
     process.env.YOUTUBE_API_KEY ||
-    process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
+    process.env.NEXT_PUBLIC_YOUTUBE_API_KEY ||
+    process.env.GOOGLE_API_KEY;
 
   const { searchParams } = new URL(request.url);
   const channelId = searchParams.get('channelId') || process.env.YOUTUBE_CHANNEL_ID;
