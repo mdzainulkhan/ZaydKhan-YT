@@ -14,7 +14,8 @@ export async function GET(request) {
   if (!apiKey) {
     return NextResponse.json(
       {
-        error: 'Missing YouTube API key.',
+        error:
+          'Missing YouTube API key. Add YOUTUBE_API_KEY or NEXT_PUBLIC_YOUTUBE_API_KEY in Vercel project settings and redeploy.',
       },
       { status: 500 }
     );
