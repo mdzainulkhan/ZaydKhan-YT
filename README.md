@@ -120,8 +120,6 @@ This project uses the **YouTube Data API v3** to retrieve:
 
 ## Live Demo
 
-Add your deployed URL here.
-
 ```
 https://zaydkhan.vercel.app/
 ```
